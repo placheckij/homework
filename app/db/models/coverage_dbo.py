@@ -3,6 +3,7 @@ import uuid
 from sqlalchemy import (
     UUID,
     Float,
+    ForeignKey,
     Text,
 )
 from sqlalchemy.dialects.postgresql import JSONB
@@ -27,6 +28,9 @@ class CoverageDBO(Base):
     limit: Mapped[float] = mapped_column(Float, nullable=True)
     deductible: Mapped[float] = mapped_column(Float, nullable=False)
     exclusions: Mapped[list] = mapped_column(JSONB, nullable=False)
+    policy_id: Mapped[UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("policy.id"), nullable=False
+    )
 
     def to_model(self) -> Coverage:
         return Coverage(

@@ -38,3 +38,13 @@ class AddressDBO(Base):
             zip_code=self.zip_code,
             country=self.country,
         )
+
+    @classmethod
+    def from_model(cls, address: Address) -> "AddressDBO":
+        return cls(
+            street=address.street,
+            city=address.city,
+            state=address.state,
+            zip_code=address.zip_code,
+            country=address.country,
+        )

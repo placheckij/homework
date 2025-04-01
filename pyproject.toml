@@ -3,11 +3,11 @@ name = "homework"
 description = "Recruitment task"
 authors = [{name="Jakub Płachecki", email="jakub.plachecki@gmail.com"}]
 readme = "README.md"
-version = "0.0.1"
+version = "0.1.0"
 
 [tool.poetry]
 package-mode = false
-version = "0.0.1"
+version = "0.1.0"
 
 [tool.poetry.dependencies]
 python = "^3.11"

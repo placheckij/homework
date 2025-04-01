@@ -3,7 +3,7 @@ from datetime import datetime
 
 from sqlalchemy import (
     UUID,
-    BigInteger,
+    DateTime,
     Text,
 )
 from sqlalchemy.orm import (
@@ -27,19 +27,31 @@ class PersonDBO(Base):
     id_number: Mapped[str] = mapped_column(Text, nullable=False)
     first_name: Mapped[str] = mapped_column(Text, nullable=False)
     last_name: Mapped[str] = mapped_column(Text, nullable=False)
-    date_of_birth: Mapped[int] = mapped_column(BigInteger, nullable=True)
+    date_of_birth: Mapped[datetime] = mapped_column(DateTime, nullable=True)
     email: Mapped[str] = mapped_column(Text, nullable=False)
     phone: Mapped[str] = mapped_column(Text, nullable=False)
 
-    address: Mapped["AddressDBO"] = relationship("AddressDBO")
+    address: Mapped["AddressDBO"] = relationship("AddressDBO", lazy="joined")
 
     def to_model(self) -> Person:
         return Person(
             id_number=self.id_number,
             first_name=self.first_name,
             last_name=self.last_name,
-            date_of_birth=datetime.fromtimestamp(self.date_of_birth),
+            date_of_birth=self.date_of_birth,
             email=self.email,
             phone=self.phone,
             address=self.address.to_model(),
+        )
+
+    @classmethod
+    def from_model(cls, person: Person) -> "PersonDBO":
+        return cls(
+            id_number=person.id_number,
+            first_name=person.first_name,
+            last_name=person.last_name,
+            date_of_birth=person.date_of_birth,
+            email=person.email,
+            phone=person.phone,
+            address=AddressDBO.from_model(person.address),
         )

@@ -4,7 +4,8 @@ from pydantic import (
     BaseModel,
     ConfigDict,
     Field,
-    ValidationError,
+    ValidationInfo,
+    field_serializer,
     field_validator,
 )
 
@@ -30,13 +31,19 @@ class Policy(BaseModel):
     notes: str | None = None
 
     @field_validator("expiration_date", mode="before")
-    def expiration_after_effective(cls, v, values):
-        if isinstance(values, dict):
-            if "effective_date" in values and v <= values["effective_date"]:
-                raise ValidationError("Expiration date must be after effective date")
-        if isinstance(v, int):
-            return datetime.fromtimestamp(v)
+    def expiration_after_effective(v, values: ValidationInfo):
+        if (
+            "effective_date" in values.data
+            and datetime.fromisoformat(str(v)) <= values.data["effective_date"]
+        ):
+            raise ValueError("Expiration date must be after effective date")
         return v
+
+    @field_serializer(
+        "created_at", "effective_date", "expiration_date", when_used="unless-none"
+    )
+    def serialize_datetime(v: datetime) -> str:
+        return v.isoformat()
 
     model_config = ConfigDict(
         json_schema_extra={

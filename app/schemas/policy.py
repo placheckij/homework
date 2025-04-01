@@ -1,7 +1,8 @@
-from pydantic import RootModel
+from pydantic import BaseModel
 
 from app.models.policy import Policy
 
 
-class AllPoliciesResponse(RootModel[list[Policy]]):
-    root: list[Policy]
+class FilteredPoliciesResponse(BaseModel):
+    policies: list[Policy]
+    total_count: int
