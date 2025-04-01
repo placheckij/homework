@@ -1,0 +1,42 @@
+exclude: 'docs|node_modules|migrations|.git|.tox|extras'
+default_stages: [commit]
+fail_fast: false # tools' functionalities are separable, so let's run all of them
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: check-merge-conflict
+      - id: check-toml
+      - id: check-yaml
+      - id: debug-statements
+      - id: end-of-file-fixer
+      - id: mixed-line-ending
+      - id: trailing-whitespace
+
+  - repo: https://github.com/timothycrosley/isort
+    rev: 5.13.2
+    hooks:
+      - id: isort
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.9.6
+    hooks:
+      - id: ruff
+      - id: ruff-format
+
+  - repo: local
+    hooks:
+    - id: unit-tests
+      name: unit-tests
+      entry: poetry run pytest tests -q
+      always_run: true
+      pass_filenames: false
+      language: system
+    - id: update-changelog
+      name: Update Changelog
+      entry: precommit/update_changelog.sh
+      always_run: true
+      pass_filenames: false
+      language: system
+      stages: [commit-msg]

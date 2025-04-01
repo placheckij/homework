@@ -1,0 +1,27 @@
+services:
+
+  backend:
+    # image: main-backend
+    platform: linux/amd64
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "0.0.0.0:3000:3000"
+    environment:
+      - DB_HOST=db:5432
+      - DB_INSTANCE_NAME=postgres
+      - DB_USER=postgres
+      - DB_PASSWD=postgres
+    depends_on:
+      db:
+        condition: service_started
+
+  db:
+    image: postgres:latest
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    ports:
+      - "5432:5432"
